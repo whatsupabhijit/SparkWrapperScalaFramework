@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /.idea/
 /target/
 *.iml
@@ -56,3 +57,41 @@ build.log
 #SHITTY output not in target directory
 build.log
 >>>>>>> 42c35ec (Created Scala project from Maven Central Archetypes (org.scala-tools.archetypes.scala.archetype.simple))
+=======
+# use glob syntax.
+syntax: glob
+*.ser
+*.class
+*~
+*.bak
+#*.off
+*.old
+
+# eclipse conf file
+.settings
+.classpath
+.project
+.manager
+.scala_dependencies
+
+# idea
+.idea
+/.idea
+*.iml
+
+# building
+target
+/target
+build
+null
+tmp*
+temp*
+dist
+test-output
+build.log
+
+# other scm
+.svn
+.CVS
+.hg*
+>>>>>>> 1923fd6 (Created Scala project from Maven Central Archetypes (org.scala-tools.archetypes.scala.archetype.simple))
