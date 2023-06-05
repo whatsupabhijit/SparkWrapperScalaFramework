@@ -1,9 +1,9 @@
 package dev.dutta.abhijit.hashnode
 
-import org.apache.spark.sql.execution.streaming.FileStreamSource.Timestamp
-import org.apache.spark.sql.types.{BooleanType, DataType, DoubleType, FloatType, IntegerType, LongType, StringType, TimestampType}
+import org.apache.spark.sql.types._
 
 import java.io.Serializable
+import java.sql.{Date, Timestamp}
 
 /**
  * This is mainly used to limit the output type of Atom.
@@ -38,6 +38,10 @@ object Converter {
 
   implicit val timestampConverter: Converter[Timestamp] = new Converter[Timestamp] {
     override def dataType: DataType = TimestampType
+  }
+
+  implicit val dateConverter: Converter[Date] = new Converter[Date] {
+    override def dataType: DataType = DateType
   }
 
   implicit val stringConverter: Converter[String] = new Converter[String] {
