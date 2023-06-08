@@ -11,12 +11,12 @@ case class Permissions(
 
 object Permissions {
 
-  def fromRules(rules: Rules): Permissions =
+  def fromRules(rule: AtomicRule): Permissions =
     Permissions(
-      isPermission1 = rules.getPermission[Boolean](Rules.PERMISSION_1),
-      isPermission2 = rules.getPermission[Boolean](Rules.PERMISSION_2),
-      permission3 = rules.getPermission[String](Rules.PERMISSION_3),
-      permission4 = rules.getPermission[Int](Rules.PERMISSION_4)
+      isPermission1 = rule.getPermission[Boolean](AtomicRule.PERMISSION_1),
+      isPermission2 = rule.getPermission[Boolean](AtomicRule.PERMISSION_2),
+      permission3 = rule.getPermission[String](AtomicRule.PERMISSION_3),
+      permission4 = rule.getPermission[Int](AtomicRule.PERMISSION_4)
     )
 
 }

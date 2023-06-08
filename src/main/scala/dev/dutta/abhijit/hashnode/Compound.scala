@@ -1,5 +1,7 @@
 package dev.dutta.abhijit.hashnode
 
+import dev.dutta.abhijit.hashnode.schema.FlattenedInput
+
 import java.io.Serializable
 import scala.reflect.runtime.universe.TypeTag
 

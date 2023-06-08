@@ -2,7 +2,7 @@ package dev.dutta.abhijit.hashnode.regulations
 
 import dev.dutta.abhijit.hashnode.constants.StringConstants
 
-object Rules {
+object AtomicRule {
 
   lazy val PERMISSION_1: String = StringConstants.PERMISSION_1
   lazy val PERMISSION_2: String = StringConstants.PERMISSION_2
@@ -12,11 +12,11 @@ object Rules {
   implicit class RulesDerivation(ruleGroup: RuleGroup) {
 
     def getPermission[T](permissionName: String)
-                        (implicit converter: RulesConverter[T]): T =
+                        (implicit converter: RuleConverter[T]): T =
       ruleGroup.getValue[T](name = permissionName)
 
     def getAllPermissions[T](permissionName: String)
-                            (implicit converter: RulesListConverter[T]): List[T] =
+                            (implicit converter: RuleListConverter[T]): List[T] =
       ruleGroup.getValues[T](name = permissionName)
 
     // TODO: we need to create the RuleGroup schema and update this function value.
