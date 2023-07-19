@@ -1,35 +1,53 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>dev.dutta-abhijit.hashnode</groupId>
   <artifactId>SparkWrapperScalaFramework</artifactId>
   <version>1.0.1</version>
+
   <name>${project.artifactId}</name>
   <description>Spark Wrapper For Scala Logic Framework</description>
 
   <properties>
-    <maven.compiler.source>1.5</maven.compiler.source>
-    <maven.compiler.target>1.5</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <scala.version>2.12.15</scala.version>
+    <scala.short.version>2.12</scala.short.version>
+    <scalast.version>3.2.10</scalast.version>
     <encoding>UTF-8</encoding>
-    <scala.version>2.13.10</scala.version>
+<!--    <skipTests>True</skipTests>-->
   </properties>
 
-<!--
-  <repositories>
-    <repository>
-      <id>scala-tools.org</id>
-      <name>Scala-Tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </repository>
-  </repositories>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>scala-tools.org</id>
-      <name>Scala-Tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </pluginRepository>
-  </pluginRepositories>
--->
+  <!--
+    <repositories>
+      <repository>
+        <id>scala-tools.org</id>
+        <name>Scala-Tools Maven2 Repository</name>
+        <url>http://scala-tools.org/repo-releases</url>
+      </repository>
+    </repositories>
+
+    <pluginRepositories>
+      <pluginRepository>
+        <id>scala-tools.org</id>
+        <name>Scala-Tools Maven2 Repository</name>
+        <url>http://scala-tools.org/repo-releases</url>
+      </pluginRepository>
+    </pluginRepositories>
+  -->
+
+<!--  <dependencyManagement>-->
+<!--    <dependencies>-->
+<!--      <dependency>-->
+<!--        <groupId>GROUP ID OF the GITHUB/BITBUCKET REPO OF THE PARENT PROJECT. MAKE SURE ITS THERE IN REPOSITORIES TOO</groupId>-->
+<!--        <artifactId>ARTIFACT ID of the same</artifactId>-->
+<!--        <version>${above group id version}}</version>-->
+<!--        <type>pom</type>-->
+<!--        <scope>import</scope>-->
+<!--      </dependency>-->
+<!--    </dependencies>-->
+<!--  </dependencyManagement>-->
 
   <dependencies>
 
@@ -39,28 +57,32 @@
       <version>${scala.version}</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-reflect -->
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-reflect</artifactId>
-      <version>2.13.10</version>
-    </dependency>
+<!--    https://mvnrepository.com/artifact/org.scala-lang/scala-reflect;-->
+<!--    <dependency>-->
+<!--      <groupId>org.scala-lang</groupId>-->
+<!--      <artifactId>scala-reflect</artifactId>-->
+<!--      <version>${scala.version}</version>-->
+<!--    </dependency>-->
 
-    <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql -->
     <dependency>
       <groupId>org.apache.spark</groupId>
-      <artifactId>spark-sql_2.12</artifactId>
-      <version>3.4.0</version>
-      <scope>provided</scope>
+      <artifactId>spark-core_${scala.short.version}</artifactId>
+      <version>3.3.1</version>
     </dependency>
 
-    <!-- Test -->
     <dependency>
-      <groupId>org.scalatest</groupId>
-      <artifactId>scalatest</artifactId>
-      <version>1.2</version>
-      <scope>test</scope>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-sql_${scala.short.version}</artifactId>
+      <version>3.3.1</version>
     </dependency>
+
+
+    <!-- Test -->
+<!--    <dependency>-->
+<!--      <groupId>org.scalatest</groupId>-->
+<!--      <artifactId>scalatest_${scala.short.version}</artifactId>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
 
   </dependencies>
 
@@ -68,41 +90,41 @@
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
     <plugins>
-      <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
-        <version>2.15.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-              <goal>testCompile</goal>
-            </goals>
-            <configuration>
-              <args>
-                <arg>-make:transitive</arg>
-                <arg>-dependencyfile</arg>
-                <arg>${project.build.directory}/.scala_dependencies</arg>
-              </args>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <useFile>false</useFile>
-          <disableXmlReport>true</disableXmlReport>
-          <!-- If you have classpath issue like NoDefClassError,... -->
-          <!-- useManifestOnlyJar>false</useManifestOnlyJar -->
-          <includes>
-            <include>**/*Test.*</include>
-            <include>**/*Suite.*</include>
-          </includes>
-        </configuration>
-      </plugin>
+<!--      <plugin>-->
+<!--        <groupId>org.scala-tools</groupId>-->
+<!--        <artifactId>maven-scala-plugin</artifactId>-->
+<!--        <version>2.15.0</version>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <goals>-->
+<!--              <goal>compile</goal>-->
+<!--              <goal>testCompile</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <args>-->
+<!--                <arg>-make:transitive</arg>-->
+<!--                <arg>-dependencyfile</arg>-->
+<!--                <arg>${project.build.directory}/.scala_dependencies</arg>-->
+<!--              </args>-->
+<!--            </configuration>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
+<!--      <plugin>-->
+<!--        <groupId>org.apache.maven.plugins</groupId>-->
+<!--        <artifactId>maven-surefire-plugin</artifactId>-->
+<!--        <version>2.7</version>-->
+<!--        <configuration>-->
+<!--          <useFile>false</useFile>-->
+<!--          <disableXmlReport>true</disableXmlReport>-->
+<!--          &lt;!&ndash; If you have classpath issue like NoDefClassError,... &ndash;&gt;-->
+<!--          &lt;!&ndash; useManifestOnlyJar>false</useManifestOnlyJar &ndash;&gt;-->
+<!--          <includes>-->
+<!--            <include>**/*Test.*</include>-->
+<!--            <include>**/*Suite.*</include>-->
+<!--          </includes>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
     </plugins>
   </build>
 </project>

@@ -24,9 +24,9 @@ object RuleConverter {
       def convert(value: String): Double = value.toDouble
     }
 
-  //TODO: create string2Float/Long/Boolean
+  // TODO: create string2Float/Long/Boolean
 
-  implicit val stringList2String: RuleConverter[String] =
+  implicit val stringList2String: RuleListConverter[String] =
     new RuleListConverter[String] {
       def convert(values: List[String]): List[String] = values
     }
