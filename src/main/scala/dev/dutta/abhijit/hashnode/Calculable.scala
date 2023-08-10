@@ -1,7 +1,6 @@
 package dev.dutta.abhijit.hashnode
 
 import org.apache.spark.sql.{DataFrame, Dataset}
-
 /**
  * A Calculable object is associated with a list of Atoms that can be called
  * @tparam I Common input type of Atoms associated with the object (it must not be a Neutron)
@@ -20,5 +19,5 @@ trait Calculable[I <: ElementOverriders] {
    * @param i Dataset of I
    * @return Dataframe of Atom's calculated values
    * */
-  def calcDataset(i: Dataset[I]): DataFrame
+  def calcDataset(i: Dataset[I]): DataFrame = ???
 }

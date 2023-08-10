@@ -7,7 +7,7 @@ case class Permissions(
                       isPermission1: Boolean = false,
                       isPermission2: Boolean = false,
                       permission3: String = STRING_EMPTY,
-                      permission4: Int = INT_ZERO)
+                      permission4: Int = ZERO)
 
 object Permissions {
 
