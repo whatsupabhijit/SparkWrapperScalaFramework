@@ -11,6 +11,7 @@
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
+    <spark.version>3.3.1</spark.version>
     <scala.version>2.12.15</scala.version>
     <scala.short.version>2.12</scala.short.version>
     <scalast.version>3.2.10</scalast.version>
@@ -67,13 +68,13 @@
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_${scala.short.version}</artifactId>
-      <version>3.3.1</version>
+      <version>${spark.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-sql_${scala.short.version}</artifactId>
-      <version>3.3.1</version>
+      <version>${spark.version}</version>
     </dependency>
 
 
@@ -89,7 +90,7 @@
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
-    <plugins>
+<!--    <plugins>-->
 <!--      <plugin>-->
 <!--        <groupId>org.scala-tools</groupId>-->
 <!--        <artifactId>maven-scala-plugin</artifactId>-->
@@ -125,6 +126,6 @@
 <!--          </includes>-->
 <!--        </configuration>-->
 <!--      </plugin>-->
-    </plugins>
+<!--    </plugins>-->
   </build>
 </project>
