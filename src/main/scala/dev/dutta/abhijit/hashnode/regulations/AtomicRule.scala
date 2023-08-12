@@ -2,6 +2,21 @@ package dev.dutta.abhijit.hashnode.regulations
 
 import dev.dutta.abhijit.hashnode.constants.StringConstants
 
+case class AtomicRule(ruleGroup: RuleGroup) {
+
+  val rules: List[Rule] = ruleGroup.rules
+
+  val stringRules: Map[String, String] = rules
+    .filter(_.`type` == "String")
+    .map(rule => rule.name -> rule.values.head)
+    .toMap
+
+  val stringListRules: Map[String, List[String]] = rules
+    .filter(_.`type` == "String")
+    .map(rule => rule.name -> rule.values)
+    .toMap
+}
+
 object AtomicRule {
 
   lazy val PERMISSION_1: String = StringConstants.PERMISSION_1
