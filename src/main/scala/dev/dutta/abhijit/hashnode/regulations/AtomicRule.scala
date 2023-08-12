@@ -12,7 +12,7 @@ case class AtomicRule(ruleGroup: RuleGroup) {
     .toMap
 
   val stringListRules: Map[String, List[String]] = rules
-    .filter(_.`type` == "String")
+    .filter(_.`type` == "StringList")
     .map(rule => rule.name -> rule.values)
     .toMap
 }

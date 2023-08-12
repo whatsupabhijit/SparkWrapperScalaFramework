@@ -14,8 +14,8 @@ object Permissions {
 
   def fromRules(atomicRule: AtomicRule): Permissions =
     Permissions(
-//      isPermission1 = atomicRule.ruleGroup.getPermission[Boolean](AtomicRule.PERMISSION_1),
-//      isPermission2 = atomicRule.ruleGroup.getPermission[Boolean](AtomicRule.PERMISSION_2),
+      isPermission1 = atomicRule.ruleGroup.getPermission[Boolean](AtomicRule.PERMISSION_1),
+      isPermission2 = atomicRule.ruleGroup.getPermission[Boolean](AtomicRule.PERMISSION_2),
       permission3 = atomicRule.ruleGroup.getPermission[String](AtomicRule.PERMISSION_3),
       permission4 = atomicRule.ruleGroup.getPermission[Int](AtomicRule.PERMISSION_4)
     )
