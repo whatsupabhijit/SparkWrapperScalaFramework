@@ -5,10 +5,10 @@ import dev.dutta.abhijit.hashnode.constants.StringConstants._
 import dev.dutta.abhijit.hashnode.regulations.AtomicRule.RulesDerivation
 
 case class Permissions(
-                      isPermission1: Boolean = false,
-                      isPermission2: Boolean = false,
-                      permission3: String = STRING_EMPTY,
-                      permission4: Int = ZERO)
+                        isPermission1: Boolean = false,
+                        isPermission2: Boolean = false,
+                        permission3: String = EMPTY_STRING,
+                        permission4: Int = ZERO)
 
 object Permissions {
 

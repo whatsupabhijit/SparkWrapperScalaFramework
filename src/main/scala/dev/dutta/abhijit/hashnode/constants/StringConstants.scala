@@ -9,5 +9,5 @@ object StringConstants {
   lazy val PERMISSION_4: String = "Permission 4 - Build certain Atoms only if this is true"
 
   // Constants
-  lazy val STRING_EMPTY: String = ""
+  lazy val EMPTY_STRING: String = ""
 }
