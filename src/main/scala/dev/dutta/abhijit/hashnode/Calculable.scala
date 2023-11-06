@@ -12,7 +12,7 @@ trait Calculable[I <: ElementOverriders] {
    * @param i Vector of I
    * @return List of Atom's calculated values (String for now, will be changed to some custom class)
    * */
-  def calc(i: Vector[I]): List[String]
+  def calc(i: Vector[I]): AtomTable
 
   /**
    * Calculates the output of a dataset of specific source type I
