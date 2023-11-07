@@ -1,12 +1,12 @@
-package dev.dutta.abhijit.hashnode
+package dev.dutta.abhijit.hashnode.nucleus
 
+import dev.dutta.abhijit.hashnode.converter.Converter
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.types.{DataType, StructField}
 import org.apache.spark.sql.{DataFrame, Dataset}
 
-import scala.reflect.runtime.universe.TypeTag
 import java.io.Serializable
-import scala.util.{Failure, Success, Try}
+import scala.reflect.runtime.universe.TypeTag
 
 class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
 (
@@ -23,7 +23,6 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
 ) extends Serializable with Calculable[I] {
 
   private val atomName: String = name
-  private val atomDescription: String = description
   private val calcDefault: I => O = howToCalcDefault
   private val calcNoAtom: I => O = howToCalcNoAtom
   private val calcAtom: I => O = howToCalcAtom
@@ -35,24 +34,25 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
    * @param i Vector of I
    * @return List of Atom's calculated values (String for now, will be changed to some custom class)
    * */
-  private def calcLogic(i: I): O = Try {
-      if (isNoAtomNotApplicable && i.isNoAtomFound) calcNoAtom(i)
-      else if (i.isToBeDefaulted) calcDefault(i)
-      else calcAtom(i)
-    } match {
-      case Success(value) => value
-      case Failure(exception) =>
-        println(exception.toString)
-        throw new Exception(exception)
+   val calcLogic: I => O = (i: I) => {
+     try {
+       if (isNoAtomNotApplicable && i.isNoAtomFound) calcNoAtom(i)
+       else if (i.isToBeDefaulted) calcDefault(i)
+       else calcAtom(i)
+     } catch {
+       case exception: Exception =>
+         println(exception.toString)
+         throw new Exception(exception)
 
-          // TODO: Create AtomException class
-//      case Failure(exception) =>throw new AtomException(
-//        errorRecordIdentifier = i.identifier,
-//        errorTimeIdentifier = i.processingDateTime,
-//        errorCode = ATOM_CALC_001,
-//        errorMessage = ExceptionCodesWithDesc(ATOM_CALC_001),
-//        errorException = exception)
-    }
+       // TODO: Create AtomException class
+       //      case Failure(exception) =>throw new AtomException(
+       //        errorRecordIdentifier = i.identifier,
+       //        errorTimeIdentifier = i.processingDateTime,
+       //        errorCode = ATOM_CALC_001,
+       //        errorMessage = ExceptionCodesWithDesc(ATOM_CALC_001),
+       //        errorException = exception)
+     }
+   }
 
   private def toOutput(v: Vector[O]): List[AtomOutput[O]] =
     List(
@@ -74,8 +74,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
     // In simple terms, it helps Spark understand how to serialize and deserialize data
     // when you convert between Datasets and DataFrames.
     implicit val encoder: ExpressionEncoder[O] = ExpressionEncoder[O]
-//    i.map((row: I) => calcLogic(row)).toDF()
-    i.map(calcLogic).toDF()
+    i.map((row: I) => calcLogic(row)).toDF()
   }
 
   private def sparkDataType: DataType = c.dataType
@@ -110,8 +109,7 @@ object Atom extends Serializable {
       howToCalcAtom = calc
     )(element)
 
-    // TODO: Whenever you create an Atom it needs to be added in the Element group automatically
-//    element.add(atom)
+    element.add(atom)
 
     atom
   }

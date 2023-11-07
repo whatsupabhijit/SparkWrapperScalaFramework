@@ -7,8 +7,8 @@ import dev.dutta.abhijit.hashnode.regulations.AtomicRule.RulesDerivation
 case class Permissions(
                         isPermission1: Boolean = false,
                         isPermission2: Boolean = false,
-                        permission3: String = EMPTY_STRING,
-                        permission4: Int = ZERO)
+                        permission3: String = _EMPTY,
+                        permission4: Int = _ZERO)
 
 object Permissions {
 

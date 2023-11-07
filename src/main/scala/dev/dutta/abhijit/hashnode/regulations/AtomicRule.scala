@@ -19,10 +19,10 @@ case class AtomicRule(ruleGroup: RuleGroup) {
 
 object AtomicRule {
 
-  lazy val PERMISSION_1: String = StringConstants.PERMISSION_1
-  lazy val PERMISSION_2: String = StringConstants.PERMISSION_2
-  lazy val PERMISSION_3: String = StringConstants.PERMISSION_3
-  lazy val PERMISSION_4: String = StringConstants.PERMISSION_4
+  lazy val PERMISSION_1: String = StringConstants._PERMISSION_1
+  lazy val PERMISSION_2: String = StringConstants._PERMISSION_2
+  lazy val PERMISSION_3: String = StringConstants._PERMISSION_3
+  lazy val PERMISSION_4: String = StringConstants._PERMISSION_4
 
   implicit class RulesDerivation(ruleGroup: RuleGroup) {
 

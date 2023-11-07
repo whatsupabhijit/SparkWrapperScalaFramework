@@ -1,4 +1,4 @@
-package dev.dutta.abhijit.hashnode
+package dev.dutta.abhijit.hashnode.converter
 
 import org.apache.spark.sql.types._
 

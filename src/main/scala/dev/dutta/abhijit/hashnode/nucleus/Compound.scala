@@ -1,4 +1,4 @@
-package dev.dutta.abhijit.hashnode
+package dev.dutta.abhijit.hashnode.nucleus
 
 import dev.dutta.abhijit.hashnode.schema.FlattenedInput
 

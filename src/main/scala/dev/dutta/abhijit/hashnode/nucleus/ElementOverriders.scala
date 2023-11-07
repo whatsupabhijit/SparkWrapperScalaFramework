@@ -1,4 +1,4 @@
-package dev.dutta.abhijit.hashnode
+package dev.dutta.abhijit.hashnode.nucleus
 
 import java.io.Serializable
 

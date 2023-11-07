@@ -1,5 +1,6 @@
-package dev.dutta.abhijit.hashnode
+package dev.dutta.abhijit.hashnode.nucleus
 
+import dev.dutta.abhijit.hashnode.nucleus.AtomOutput.AtomTable
 import org.apache.spark.sql.{DataFrame, Dataset}
 /**
  * A Calculable object is associated with a list of Atoms that can be called

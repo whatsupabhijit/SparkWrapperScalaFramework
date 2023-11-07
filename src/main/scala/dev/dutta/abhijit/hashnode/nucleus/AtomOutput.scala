@@ -1,4 +1,4 @@
-package dev.dutta.abhijit.hashnode
+package dev.dutta.abhijit.hashnode.nucleus
 
 import java.io.Serializable
 
@@ -11,7 +11,7 @@ object AtomOutput {
   /**
    * Type alias to complex list of Atoms with ouput type associated
    * */
-  private type AtomTable = List[AtomOutput[_]]
+  type AtomTable = List[AtomOutput[_]]
 
   /**
    * type alias methods
