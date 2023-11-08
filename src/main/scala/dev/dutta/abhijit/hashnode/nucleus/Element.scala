@@ -3,7 +3,7 @@ package dev.dutta.abhijit.hashnode.nucleus
 import dev.dutta.abhijit.hashnode.nucleus.AtomOutput.AtomTable
 import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{DataFrame, Dataset, Row}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 
 import java.io.Serializable
 import scala.collection.mutable.ListBuffer
@@ -37,6 +37,34 @@ class Element[I <: ElementOverriders: TypeTag]
   override def calcDataset(i: Dataset[I]): DataFrame = {
     implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
     i.map(row => functionToCalcAtomsForEachSparkRow(row))
+  }
+
+}
+
+object Element extends Serializable {
+
+  def apply[I <: ElementOverriders: TypeTag]
+  (
+    elementName: String
+  )(
+    implicit compound: Compound[I]
+  ): Element[I] = {
+    val element: Element[I] = new Element[I](name = elementName)
+
+    // TODO: whenever you create an Element you should add the Element to the Compound
+//    compound.add(element)
+
+    element
+  }
+
+
+  implicit class CalcVector[I <: ElementOverriders](vector: Vector[I]) {
+    def calcVector(element: Element[I]): AtomTable = element.calc(vector)
+  }
+
+  implicit class CalcSpark[I <: ElementOverriders](dataset: Dataset[I]) {
+    def calcSpark(element: Element[I])(implicit ss: SparkSession): DataFrame =
+      dataset.map(row => element.getAtomValuesForEachRow(row))(RowEncoder(element.schema))
   }
 
 }

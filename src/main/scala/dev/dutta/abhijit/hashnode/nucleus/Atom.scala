@@ -15,6 +15,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
   howToCalcDefault: I => O,
   isNoAtomNotApplicable: Boolean = false,
   howToCalcNoAtom: I => O,
+    // isCaclAtomRequired: Boolean // TODO: It is possible that Atom need not be generated always
   howToCalcAtom: I => O
 )(
   belongsToWhichElement: Element[I]
