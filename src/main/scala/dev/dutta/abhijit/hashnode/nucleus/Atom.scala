@@ -15,7 +15,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
   howToCalcDefault: I => O,
   isNoAtomNotApplicable: Boolean = false,
   howToCalcNoAtom: I => O,
-    // isCaclAtomRequired: Boolean // TODO: It is possible that Atom need not be generated always
+    // isCaclAtomRequired: Boolean // TODO: TODO_ID:1 It is possible that Atom need not be generated always
   howToCalcAtom: I => O
 )(
   belongsToWhichElement: Element[I]
@@ -35,7 +35,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
    * @param i Vector of I
    * @return List of Atom's calculated values (String for now, will be changed to some custom class)
    * */
-   val calcLogic: I => O = (i: I) => {
+   val logicForAnAtom: I => O = (i: I) => {
      try {
        if (isNoAtomNotApplicable && i.isNoAtomFound) calcNoAtom(i)
        else if (i.isToBeDefaulted) calcDefault(i)
@@ -65,7 +65,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
     )
 
   override def calc(i: Vector[I]): List[AtomOutput[O]] =
-    toOutput(i.map(calcLogic))
+    toOutput(i.map(logicForAnAtom))
 
 
   override def calcDataset(i: Dataset[I]): DataFrame = {
@@ -75,7 +75,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
     // In simple terms, it helps Spark understand how to serialize and deserialize data
     // when you convert between Datasets and DataFrames.
     implicit val encoder: ExpressionEncoder[O] = ExpressionEncoder[O]
-    i.map((row: I) => calcLogic(row)).toDF()
+    i.map((row: I) => logicForAnAtom(row)).toDF()
   }
 
   private def sparkDataType: DataType = c.dataType
