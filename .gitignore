@@ -1,6 +1,43 @@
+/.idea/
 .idea/
+/target/
+*.iml
+
+.DS_Store
+.classpath
+.project
+.gitignore
+/.settings/
 *.class
 *.log
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+=======
+# use glob syntax.
+syntax: glob
+*.ser
+*~
+*.bak
+#*.off
+*.old
+
+# eclipse conf file
+.settings
+.manager
+.scala_dependencies
+
+# building
+target
+build
+null
+tmp*
+temp*
+dist
+test-output
+build.log
+
+# other scm
+.svn
+.CVS
+.hg*
