@@ -64,22 +64,17 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
       )
     )
 
+  // Logic for handling Vector - Online
   override def calc(i: Vector[I]): List[AtomOutput[O]] =
     toOutput(i.map(logicForAnAtom))
 
+  // Logic for handling Spark Dataset - Batch
+  implicit val encoder: ExpressionEncoder[O] = ExpressionEncoder[O]
 
-  override def calcDataset(i: Dataset[I]): DataFrame = {
-    // ExpressionEncoder is a class in Apache Spark's DataFrame API that provides a way to convert
-    // between Spark's internal binary format (Catalyst expressions) and the corresponding JVM objects.
-    // It's used to encode and decode data when working with Datasets in Spark.
-    // In simple terms, it helps Spark understand how to serialize and deserialize data
-    // when you convert between Datasets and DataFrames.
-    implicit val encoder: ExpressionEncoder[O] = ExpressionEncoder[O]
-    i.map((row: I) => logicForAnAtom(row)).toDF()
-  }
+  override def calcDataset(i: Dataset[I]): DataFrame = i.map((row: I) => logicForAnAtom(row)).toDF()
 
+  // Methods for parent class i.e. Element
   private def sparkDataType: DataType = c.dataType
-
   def structField: StructField = StructField(atomName, sparkDataType, nullable = false)
 
 }
@@ -116,8 +111,7 @@ object Atom extends Serializable {
   }
 
   implicit class CalcDataset[I <: ElementOverriders](dataset: Dataset[I]) {
-    def calcSpark[O](atom: Atom[I, O]): DataFrame =
-      atom.calcDataset(dataset)
+    def calcSpark[O](atom: Atom[I, O]): DataFrame = atom.calcDataset(dataset)
   }
 
 }

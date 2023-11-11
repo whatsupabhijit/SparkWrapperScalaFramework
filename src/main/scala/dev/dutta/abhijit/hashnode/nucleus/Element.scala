@@ -3,7 +3,7 @@ package dev.dutta.abhijit.hashnode.nucleus
 import dev.dutta.abhijit.hashnode.nucleus.AtomOutput.AtomTable
 import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{DataFrame, Dataset, Row}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 
 import java.io.Serializable
 import scala.collection.mutable.ListBuffer
@@ -12,37 +12,26 @@ import scala.reflect.runtime.universe.TypeTag
 class Element[I <: ElementOverriders: TypeTag]
 (
   name: String
-) (
-  implicit compound: Compound[I]
 ) extends Calculable[I] with Serializable {
 
   val elementName: String = name
 
   // Methods for child class i.e. Atom
-  def add(atom: Atom[I, _]): Unit = listOfAtoms += atom
+  def add(atom: Atom[I, _]): Unit = atomsBuffer += atom
 
   // Class Variables and Methods
-  private val listOfAtoms: ListBuffer[Atom[I, _]] = ListBuffer()
-  val allAtoms: List[Atom[I, _]] = listOfAtoms.toList // TODO: TODO_ID_1
+  private val atomsBuffer: ListBuffer[Atom[I, _]] = ListBuffer()
+  val allAtoms: List[Atom[I, _]] = atomsBuffer.toList // TODO: TODO_ID_1
+  private lazy val allAtomLogics: List[I => _] = allAtoms.map(_.logicForAnAtom)
 
   // Logic for handling Vector - Online
   override def calc(i: Vector[I]): AtomTable = allAtoms.flatMap(_.calc(i))
 
-
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(allAtoms.map(_.structField))
-
-  private lazy val getAllApplicableAtomValues: I => Row = (i: I) =>
-    allAtoms
-    .map(_.logicForAnAtom)
-    .map(logicForAnAtom => logicForAnAtom(i))
-
-  private def withCalculatedAtoms(i: I): Row = Row.fromSeq(getAllApplicableAtomValues(i))
-
-  override def calcDataset(i: Dataset[I]): DataFrame = {
-    implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
-    i.map(row => withCalculatedAtoms(row))
-  }
+  implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
+  private def withCalculatedAtoms(i: I): Row = Row.fromSeq(allAtomLogics.map(_(i)))
+  override def calcDataset(i: Dataset[I]): DataFrame = i.map(withCalculatedAtoms)
 
 }
 
@@ -66,10 +55,9 @@ object Element extends Serializable {
     def calcVector(element: Element[I]): AtomTable = element.calc(vector)
   }
 
-  // TODO: Fix the batch version as below propery map through the dataset
-//  implicit class CalcSpark[I <: ElementOverriders](dataset: Dataset[I]) {
-//    def calcSpark(element: Element[I])(implicit ss: SparkSession): DataFrame =
-//      dataset.map(row => element.getAllApplicableAtomValues(row))(RowEncoder(element.schema))
-//  }
+  implicit class CalcSpark[I <: ElementOverriders](dataset: Dataset[I]) {
+    def calcSpark(element: Element[I])(implicit ss: SparkSession): DataFrame =
+      dataset.map(row => element.withCalculatedAtoms(row))(element.encoder)
+  }
 
 }
