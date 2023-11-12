@@ -30,7 +30,7 @@ class Element[I <: ElementOverriders: TypeTag]
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(allAtoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
-  private def withCalculatedAtoms(i: I): Row = Row.fromSeq(allAtomLogics.map(_(i)))
+  private def withCalculatedAtoms(row: I): Row = Row.fromSeq(allAtomLogics.map(_(row)))
   override def calcDataset(i: Dataset[I]): DataFrame = i.map(withCalculatedAtoms)
 
 }
@@ -44,9 +44,7 @@ object Element extends Serializable {
     implicit compound: Compound[I]
   ): Element[I] = {
     val element: Element[I] = new Element[I](name = elementName)
-
     compound.add(element)
-
     element
   }
 

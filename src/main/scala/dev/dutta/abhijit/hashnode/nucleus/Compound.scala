@@ -1,7 +1,7 @@
 package dev.dutta.abhijit.hashnode.nucleus
 
 import dev.dutta.abhijit.hashnode.nucleus.AtomOutput.AtomTable
-import dev.dutta.abhijit.hashnode.schema.FlattenedInput
+import dev.dutta.abhijit.hashnode.schema.NucleusInput
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
 import org.apache.spark.sql.types.StructType
@@ -12,7 +12,7 @@ import scala.reflect.runtime.universe.TypeTag
 
 class Compound[I <: ElementOverriders: TypeTag]
 (
-  elementTransformer: FlattenedInput => I
+  elementTransformer: NucleusInput => I
 )(
   implicit val nucleus: Nucleus
 ) extends Calculable[I] with Serializable {
@@ -32,7 +32,7 @@ class Compound[I <: ElementOverriders: TypeTag]
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(allAtoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
-  private def withCalculatedAtoms(i: I): Row = Row.fromSeq(allAtomLogics.map(_(i)))
+  private def withCalculatedAtoms(row: I): Row = Row.fromSeq(allAtomLogics.map(_(row)))
   override def calcDataset(i: Dataset[I]): DataFrame = i.map(withCalculatedAtoms)
 
 }
@@ -40,10 +40,10 @@ class Compound[I <: ElementOverriders: TypeTag]
 object Compound extends Serializable {
 
   def apply[I <: ElementOverriders : TypeTag](
-                                               elementTransformer: FlattenedInput => I
+                                               elementTransformer: NucleusInput => I
                                              ) (implicit nucleus: Nucleus) : Compound[I] = {
     val compound = new Compound[I](elementTransformer)
-//    nucleus.add(compound)
+    nucleus.add(compound)
     compound
   }
 

@@ -14,6 +14,4 @@ trait ElementOverriders extends Serializable {
   def isToBeDefaulted: Boolean
 
   def elementId: String
-
-  def elementMetaData: Vector[String]
 }

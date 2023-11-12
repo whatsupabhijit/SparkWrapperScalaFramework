@@ -70,11 +70,10 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
 
   // Logic for handling Spark Dataset - Batch
   implicit val encoder: ExpressionEncoder[O] = ExpressionEncoder[O]
-
   override def calcDataset(i: Dataset[I]): DataFrame = i.map((row: I) => logicForAnAtom(row)).toDF()
 
   // Methods for parent class i.e. Element
-  private def sparkDataType: DataType = c.dataType
+  private lazy val sparkDataType: DataType = c.dataType
   def structField: StructField = StructField(atomName, sparkDataType, nullable = false)
 
 }
