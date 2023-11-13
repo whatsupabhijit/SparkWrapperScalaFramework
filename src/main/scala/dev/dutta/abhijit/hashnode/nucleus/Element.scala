@@ -25,13 +25,13 @@ class Element[I <: ElementOverriders: TypeTag]
   private lazy val allAtomLogics: List[I => _] = allAtoms.map(_.logicForAnAtom)
 
   // Logic for handling Vector - Online
-  override def calc(i: Vector[I]): AtomTable = allAtoms.flatMap(_.calc(i))
+  override def calc(records: Vector[I]): AtomTable = allAtoms.flatMap(_.calc(records))
 
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(allAtoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
-  private def withCalculatedAtoms(row: I): Row = Row.fromSeq(allAtomLogics.map(_(row)))
-  override def calcDataset(i: Dataset[I]): DataFrame = i.map(withCalculatedAtoms)
+  private def withAtoms(aRecord: I): Row = Row.fromSeq(allAtomLogics.map(_(aRecord)))
+  override def calc(records: Dataset[I]): DataFrame = records.map(withAtoms)
 
 }
 
@@ -49,13 +49,13 @@ object Element extends Serializable {
   }
 
 
-  implicit class CalcVector[I <: ElementOverriders](vector: Vector[I]) {
-    def calcVector(element: Element[I]): AtomTable = element.calc(vector)
+  implicit class CalcOnline[I <: ElementOverriders](records: Vector[I]) {
+    def calcOnline(element: Element[I]): AtomTable = element.calc(records)
   }
 
-  implicit class CalcSpark[I <: ElementOverriders](dataset: Dataset[I]) {
-    def calcSpark(element: Element[I])(implicit ss: SparkSession): DataFrame =
-      dataset.map(row => element.withCalculatedAtoms(row))(element.encoder)
+  implicit class CalcBatch[I <: ElementOverriders](records: Dataset[I]) {
+    def calcBatch(element: Element[I])(implicit ss: SparkSession): DataFrame =
+      records.map(element.withAtoms)(element.encoder)
   }
 
 }

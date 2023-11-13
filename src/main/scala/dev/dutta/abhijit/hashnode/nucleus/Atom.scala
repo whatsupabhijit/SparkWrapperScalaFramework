@@ -32,7 +32,6 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
   /**
    * Calculates the output of a vector of specific source type I
    *
-   * @param i Vector of I
    * @return List of Atom's calculated values (String for now, will be changed to some custom class)
    * */
    val logicForAnAtom: I => O = (i: I) => {
@@ -65,12 +64,11 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
     )
 
   // Logic for handling Vector - Online
-  override def calc(i: Vector[I]): List[AtomOutput[O]] =
-    toOutput(i.map(logicForAnAtom))
+  override def calc(records: Vector[I]): List[AtomOutput[O]] = toOutput(records.map(logicForAnAtom))
 
   // Logic for handling Spark Dataset - Batch
   implicit val encoder: ExpressionEncoder[O] = ExpressionEncoder[O]
-  override def calcDataset(i: Dataset[I]): DataFrame = i.map((row: I) => logicForAnAtom(row)).toDF()
+  override def calc(records: Dataset[I]): DataFrame = records.map(logicForAnAtom).toDF()
 
   // Methods for parent class i.e. Element
   private lazy val sparkDataType: DataType = c.dataType
@@ -109,8 +107,8 @@ object Atom extends Serializable {
     atom
   }
 
-  implicit class CalcDataset[I <: ElementOverriders](dataset: Dataset[I]) {
-    def calcSpark[O](atom: Atom[I, O]): DataFrame = atom.calcDataset(dataset)
+  implicit class calcBatch[I <: ElementOverriders](records: Dataset[I]) {
+    def calcBatch[O: TypeTag](atom: Atom[I, O]): DataFrame = atom.calc(records)
   }
 
 }

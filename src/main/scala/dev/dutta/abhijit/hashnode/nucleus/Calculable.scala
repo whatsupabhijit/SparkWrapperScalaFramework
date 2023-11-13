@@ -20,5 +20,5 @@ trait Calculable[I <: ElementOverriders] {
    * @param i Dataset of I
    * @return Dataframe of Atom's calculated values
    * */
-  def calcDataset(i: Dataset[I]): DataFrame
+  def calc(i: Dataset[I]): DataFrame
 }

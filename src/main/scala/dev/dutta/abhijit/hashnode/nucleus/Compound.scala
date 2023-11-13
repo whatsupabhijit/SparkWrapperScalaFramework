@@ -11,11 +11,9 @@ import scala.collection.mutable.ListBuffer
 import scala.reflect.runtime.universe.TypeTag
 
 class Compound[I <: ElementOverriders: TypeTag]
-(
-  elementTransformer: NucleusInput => I
-)(
-  implicit val nucleus: Nucleus
-) extends Calculable[I] with Serializable {
+(mutator: NucleusInput => I)
+(implicit val nucleus: Nucleus)
+  extends Calculable[I] with Serializable {
 
   // Methods for child class i.e. Element
   def add(element: Element[I]): Unit = elementsBuffer += element
@@ -23,37 +21,42 @@ class Compound[I <: ElementOverriders: TypeTag]
   // Class Variables and Methods
   private val elementsBuffer: ListBuffer[Element[I]] = new ListBuffer()
   private val allElements: List[Element[I]] = elementsBuffer.toList
-  private val allAtoms: List[Atom[I, _]] = allElements.flatMap(_.allAtoms)  // TODO: TODO_ID_1
+  val allAtoms: List[Atom[I, _]] = allElements.flatMap(_.allAtoms)  // TODO: TODO_ID_1
   private val allAtomLogics: List[I => _] = allAtoms.map(_.logicForAnAtom)
 
   // Logic for handling Vector - Online
-  override def calc(i: Vector[I]): AtomTable = allAtoms.flatMap(_.calc(i))
+  override def calc(records: Vector[I]): AtomTable = allAtoms.flatMap(_.calc(records))
+
+  def calcAll(records: Vector[NucleusInput]): AtomTable = {
+    val transformedInput: Vector[I] = records.map(mutator)
+    calc(transformedInput)
+  }
 
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(allAtoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
-  private def withCalculatedAtoms(row: I): Row = Row.fromSeq(allAtomLogics.map(_(row)))
-  override def calcDataset(i: Dataset[I]): DataFrame = i.map(withCalculatedAtoms)
-
+  def withAtoms(aRecord: I): Row = Row.fromSeq(allAtomLogics.map(_(aRecord)))
+  def withAtoms(aRecord: NucleusInput): Row = Row.fromSeq(allAtomLogics.map(_(mutator(aRecord))))
+  override def calc(records: Dataset[I]): DataFrame = records.map(withAtoms)
 }
 
 object Compound extends Serializable {
 
-  def apply[I <: ElementOverriders : TypeTag](
-                                               elementTransformer: NucleusInput => I
-                                             ) (implicit nucleus: Nucleus) : Compound[I] = {
-    val compound = new Compound[I](elementTransformer)
+  def apply[I <: ElementOverriders : TypeTag]
+  (mutator: NucleusInput => I)
+  (implicit nucleus: Nucleus) : Compound[I] = {
+    val compound = new Compound[I](mutator)
     nucleus.add(compound)
     compound
   }
 
-  implicit class CalcVector[I <: ElementOverriders](vector: Vector[I]) {
-    def calcVector(compound: Compound[I]): AtomTable = compound.calc(vector)
+  implicit class CalcOnline[I <: ElementOverriders](records: Vector[I]) {
+    def calcOnline(compound: Compound[I]): AtomTable = compound.calc(records)
   }
 
-  implicit class CalcSpark[I <: ElementOverriders](dataset: Dataset[I]) {
-    def calcSpark(compound: Compound[I])(implicit ss: SparkSession): DataFrame =
-      dataset.map(row => compound.withCalculatedAtoms(row))(compound.encoder)
+  implicit class CalcBatch[I <: ElementOverriders](records: Dataset[I]) {
+    def calcBatch(compound: Compound[I])(implicit ss: SparkSession): DataFrame =
+      records.map(compound.withAtoms)(compound.encoder)
   }
 
 }
