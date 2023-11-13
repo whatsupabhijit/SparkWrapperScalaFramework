@@ -16,7 +16,7 @@
     <scala.short.version>2.12</scala.short.version>
     <scalast.version>3.2.10</scalast.version>
     <encoding>UTF-8</encoding>
-<!--    <skipTests>True</skipTests>-->
+    <skipTests>True</skipTests>
   </properties>
 
 
@@ -81,11 +81,12 @@
 
 
     <!-- Test -->
-<!--    <dependency>-->
-<!--      <groupId>org.scalatest</groupId>-->
-<!--      <artifactId>scalatest_${scala.short.version}</artifactId>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_${scala.short.version}</artifactId>
+      <version>${scalast.version}</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 

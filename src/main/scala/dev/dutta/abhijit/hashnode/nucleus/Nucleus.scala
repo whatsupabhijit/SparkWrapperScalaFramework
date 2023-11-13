@@ -19,13 +19,13 @@ class Nucleus extends Serializable {
   private val allAtoms: List[Atom[_, _]] = allCompounds.flatMap(_.allAtoms) // TODO: TODO_ID_1
 
   // Logic for handling Vector - Online
-  def calc(allRecords: Vector[NucleusInput]): AtomTable = allCompounds.flatMap(_.calcAll(allRecords))
+  def calc(records: Vector[NucleusInput]): AtomTable = allCompounds.flatMap(_.calcAll(records))
 
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(allAtoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
   private def withAtoms(ni: NucleusInput): Row = Row.fromSeq(allCompounds.map(_.withAtoms(ni)))
-  def calc(i: Dataset[NucleusInput]): DataFrame = i.map(withAtoms)
+  def calc(records: Dataset[NucleusInput]): DataFrame = records.map(withAtoms)
 }
 
 object Nucleus {

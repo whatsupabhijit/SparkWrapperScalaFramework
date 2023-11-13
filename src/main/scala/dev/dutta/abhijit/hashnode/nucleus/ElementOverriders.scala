@@ -9,9 +9,9 @@ import java.io.Serializable
  * */
 
 trait ElementOverriders extends Serializable {
+
   def isNoAtomFound: Boolean
 
   def isToBeDefaulted: Boolean
 
-  def elementId: String
 }
