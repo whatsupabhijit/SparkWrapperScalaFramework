@@ -11,7 +11,6 @@ object ExceptionConstants {
 
   // Error Code vs Error Description Map
   lazy val ExceptionCodesWithDesc: Map[String, String] = Map(
-    (ATOM_CALC_001, ATOM_CALC_EXCEPTION),
-  )
+    (ATOM_CALC_001, ATOM_CALC_EXCEPTION))
 
 }

@@ -62,7 +62,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
     )
 
   // Logic for handling Vector - Online
-  override def calc(records: Vector[I]): List[AtomOutput[O]] = toOutput(records.map(logicForAnAtom))
+  override def calc(records: Vector[I]): List[AtomOutput[_]] = toOutput(records.map(logicForAnAtom))
 
   // Logic for handling Spark Dataset - Batch
   implicit val encoder: ExpressionEncoder[O] = ExpressionEncoder[O]

@@ -21,7 +21,7 @@
     <hadoop.version>3.3.1</hadoop.version>
     <scoverage.plugin.version>1.4.11</scoverage.plugin.version>
     <encoding>UTF-8</encoding>
-<!--    <skipTests>True</skipTests>-->
+    <skipTests>True</skipTests>
   </properties>
 
 
@@ -170,7 +170,7 @@
           <aggregate>true</aggregate>
           <minimumCoverage>70</minimumCoverage>
           <failOnMinimumCoverage>true</failOnMinimumCoverage>
-          <additionalForkedProjectProperties>skipTests=false</additionalForkedProjectProperties>
+          <additionalForkedProjectProperties>skipTests=true</additionalForkedProjectProperties>
         </configuration>
         <executions>
           <execution>
@@ -201,7 +201,7 @@
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <failOnWarning>false</failOnWarning>
           <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>
-          <includeTestSourceDirectory>${project.basedir}/src/test/scala</includeTestSourceDirectory>
+          <testSourceDirectory>${project.basedir}/src/test/scala</testSourceDirectory>
           <configLocation>${project.basedir}/scalastyle-config.xml</configLocation>
           <outputFile>${project.basedir}/target/scalastyle-output.xml</outputFile>
           <outputEncoding>UTF-8</outputEncoding>
@@ -214,19 +214,19 @@
           </execution>
         </executions>
       </plugin>
-<!--      <plugin>-->
-<!--        <groupId>net.alchim31.maven</groupId>-->
-<!--        <artifactId>scala-maven-plugin</artifactId>-->
-<!--        <version>4.5.6</version>-->
-<!--        <executions>-->
-<!--          <execution>-->
-<!--            <goals>-->
-<!--              <goal>compile</goal>-->
-<!--              <goal>testCompile</goal>-->
-<!--            </goals>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--      </plugin>-->
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>4.5.6</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>

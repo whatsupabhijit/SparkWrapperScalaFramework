@@ -16,7 +16,7 @@ class Nucleus extends Serializable {
   // Class Variables and Methods
   private val compoundBuffer: ListBuffer[Compound[_]] = new ListBuffer()
   private val allCompounds: List[Compound[_]] = compoundBuffer.toList
-  private val allAtoms: List[Atom[_, _]] = allCompounds.flatMap(_.allAtoms) // TODO: TODO_ID_1
+  private val allAtoms: List[Atom[_, _]] = allCompounds.map(_.allAtoms).flatten // TODO: TODO_ID_1
 
   // Logic for handling Vector - Online
   def calc(records: Vector[NucleusInput]): AtomTable = allCompounds.flatMap(_.calcAll(records))

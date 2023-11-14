@@ -7,6 +7,7 @@ import dev.dutta.abhijit.hashnode.nucleus.Nucleus.nucleus
 import org.apache.spark.sql.{DataFrame, Dataset}
 
 class TestCore extends AnyFunSuite with Session {
+
   import spark.implicits._
 
   val rec01: NucleusInput = NucleusInput(
