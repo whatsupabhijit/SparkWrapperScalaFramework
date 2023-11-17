@@ -1,11 +1,13 @@
 package dev.dutta.abhijit.hashnode.nucleus
 
+import dev.dutta.abhijit.hashnode.converter.Converter
+
 import java.io.Serializable
 
 case class AtomOutput[O](
                         name: String,
                         value: Vector[O],
-                        elementName: String) extends Serializable
+                        elementName: String)(implicit c: Converter[O]) extends Serializable
 
 object AtomOutput {
   /**
@@ -23,7 +25,7 @@ object AtomOutput {
      * Converts the AtomTable to a simple Map
      * @return a map where name of the Atom is the key
      */
-    def toMap: Map[String, AtomOutput[_]] = atomList.map(x => x.name -> x).toMap
+    def toAtomMap: Map[String, AtomOutput[_]] = atomList.map(x => x.name -> x).toMap
 
   }
 

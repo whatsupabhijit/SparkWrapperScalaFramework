@@ -7,6 +7,7 @@
   <groupId>dev.dutta-abhijit.hashnode</groupId>
   <artifactId>SparkWrapperScalaFramework</artifactId>
   <version>1.0.1</version>
+  <packaging>jar</packaging>
 
   <name>${project.artifactId}</name>
   <description>Spark Wrapper For Scala Logic Framework</description>
@@ -57,13 +58,6 @@
       <version>${scala.version}</version>
     </dependency>
 
-<!--    https://mvnrepository.com/artifact/org.scala-lang/scala-reflect;-->
-<!--    <dependency>-->
-<!--      <groupId>org.scala-lang</groupId>-->
-<!--      <artifactId>scala-reflect</artifactId>-->
-<!--      <version>${scala.version}</version>-->
-<!--    </dependency>-->
-
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_${scala.short.version}</artifactId>
@@ -88,14 +82,14 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-client</artifactId>
-      <scope>compile</scope>
+      <scope>provided</scope>
       <version>${hadoop.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
-      <scope>compile</scope>
+      <scope>provided</scope>
       <version>${hadoop.version}</version>
     </dependency>
 
@@ -117,22 +111,23 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.2.0</version>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.7</version>
-        <configuration>
-          <skipTests>true</skipTests>
-<!--          <useFile>false</useFile>-->
-<!--          <disableXmlReport>true</disableXmlReport>-->
-          <!-- If you have classpath issue like NoDefClassError,... -->
-          <!-- useManifestOnlyJar>false</useManifestOnlyJar -->
-<!--          <includes>-->
-<!--            <include>**/*Test.*</include>-->
-<!--            <include>**/*Suite.*</include>-->
-<!--          </includes>-->
-        </configuration>
-      </plugin>
+<!--      Surefire plugin is required for java changes. If only scalatest it's not required. -->
+<!--      <plugin>-->
+<!--        <groupId>org.apache.maven.plugins</groupId>-->
+<!--        <artifactId>maven-surefire-plugin</artifactId>-->
+<!--        <version>2.7</version>-->
+<!--        <configuration>-->
+<!--          <skipTests>true</skipTests>-->
+<!--&lt;!&ndash;          <useFile>false</useFile>&ndash;&gt;-->
+<!--&lt;!&ndash;          <disableXmlReport>true</disableXmlReport>&ndash;&gt;-->
+<!--          &lt;!&ndash; If you have classpath issue like NoDefClassError,... &ndash;&gt;-->
+<!--          &lt;!&ndash; useManifestOnlyJar>false</useManifestOnlyJar &ndash;&gt;-->
+<!--&lt;!&ndash;          <includes>&ndash;&gt;-->
+<!--&lt;!&ndash;            <include>**/*Test.*</include>&ndash;&gt;-->
+<!--&lt;!&ndash;            <include>**/*Suite.*</include>&ndash;&gt;-->
+<!--&lt;!&ndash;          </includes>&ndash;&gt;-->
+<!--        </configuration>-->
+<!--      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -229,4 +224,25 @@
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.scoverage</groupId>
+        <artifactId>scoverage-maven-plugin</artifactId>
+        <version>${scoverage.plugin.version}</version>
+        <configuration>
+          <scalaVersion>${scala.version}</scalaVersion>
+          <aggregate>true</aggregate>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

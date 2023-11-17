@@ -11,20 +11,20 @@ import scala.collection.mutable.ListBuffer
 
 class Nucleus extends Serializable {
   // Methods for child class i.e. Compound
-  def add(compound: Compound[_]): Unit = compoundBuffer += compound
+  val compoundBuffer: ListBuffer[Compound[_]] = new ListBuffer()
+  def add(compound: Compound[_]): Unit = compoundBuffer.append(compound)
 
   // Class Variables and Methods
-  val compoundBuffer: ListBuffer[Compound[_]] = new ListBuffer()
-  lazy val allCompounds: List[Compound[_]] = compoundBuffer.toList
-  lazy val allAtoms: List[Atom[_, _]] = allCompounds.map(_.allAtoms).flatten // TODO: TODO_ID_1
+  lazy val compounds: List[Compound[_]] = compoundBuffer.toList
+  lazy val atoms: List[Atom[_, _]] = compounds.map(_.atoms).flatten // TODO: TODO_ID_1
 
   // Logic for handling Vector - Online
-  def calc(records: Vector[NucleusInput]): AtomTable = allCompounds.flatMap(_.calcNotMutated(records))
+  def calc(records: Vector[NucleusInput]): AtomTable = compounds.flatMap(_.calcNotMutated(records))
 
   // Logic for handling Spark Dataset - Batch
-  lazy val schema: StructType = StructType(allAtoms.map(_.structField))
+  lazy val schema: StructType = StructType(atoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
-  def withAtoms(ni: NucleusInput): Row = Row.fromSeq(allCompounds.map(_.withAtoms(ni)))
+  def withAtoms(ni: NucleusInput): Row = Row.fromSeq(compounds.map(_.withAtoms(ni)))
   def calc(records: Dataset[NucleusInput]): DataFrame = records.map(withAtoms)
 }
 

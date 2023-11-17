@@ -16,16 +16,16 @@ class Compound[I <: ElementOverriders: TypeTag]
   extends Calculable[I] with Serializable {
 
   // Methods for child class i.e. Element
+  val elementsBuffer: ListBuffer[Element[I]] = new ListBuffer()
   def add(element: Element[I]): Unit = elementsBuffer.append(element)
 
   // Class Variables and Methods
-  val elementsBuffer: ListBuffer[Element[I]] = new ListBuffer()
-  lazy val allElements: List[Element[I]] = elementsBuffer.toList
-  lazy val allAtoms: List[Atom[I, _]] = allElements.flatMap(_.allAtoms.toList)  // TODO: TODO_ID_1
-  lazy val allAtomLogics: List[I => _] = allAtoms.map(_.logicForAnAtom)
+  lazy val elements: List[Element[I]] = elementsBuffer.toList
+  lazy val atoms: List[Atom[I, _]] = elements.flatMap(_.atoms.toList)  // TODO: TODO_ID_1
+  lazy val atomLogics: List[I => _] = atoms.map(_.logicForAnAtom)
 
   // Logic for handling Vector - Online
-  override def calc(records: Vector[I]): AtomTable = allAtoms.flatMap(_.calc(records))
+  override def calc(records: Vector[I]): AtomTable = atoms.flatMap(_.calc(records))
 
   lazy val calcNotMutated: Vector[NucleusInput] => AtomTable =
     (records: Vector[NucleusInput]) => {
@@ -34,10 +34,10 @@ class Compound[I <: ElementOverriders: TypeTag]
     }
 
   // Logic for handling Spark Dataset - Batch
-  lazy val schema: StructType = StructType(allAtoms.map(_.structField))
+  lazy val schema: StructType = StructType(atoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
-  def withAtoms(aRecord: I): Row = Row.fromSeq(allAtomLogics.map(_(aRecord)))
-  def withAtoms(aRecord: NucleusInput): Row = Row.fromSeq(allAtomLogics.map(_(mutator(aRecord))))
+  def withAtoms(aRecord: I): Row = Row.fromSeq(atomLogics.map(_(aRecord)))
+  def withAtoms(aRecord: NucleusInput): Row = Row.fromSeq(atomLogics.map(_(mutator(aRecord))))
   override def calc(records: Dataset[I]): DataFrame = records.map(withAtoms)
 }
 

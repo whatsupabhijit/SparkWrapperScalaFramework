@@ -17,35 +17,35 @@ sealed trait Converter[O] extends Serializable {
 object Converter {
 
   implicit val intConverter: Converter[Int] = new Converter[Int] {
-    override def dataType: DataType = IntegerType
+    def dataType: DataType = IntegerType
   }
 
   implicit val longConverter: Converter[Long] = new Converter[Long] {
-    override def dataType: DataType = LongType
+    def dataType: DataType = LongType
   }
 
   implicit val floatConverter: Converter[Float] = new Converter[Float] {
-    override def dataType: DataType = FloatType
+    def dataType: DataType = FloatType
   }
 
   implicit val doubleConverter: Converter[Double] = new Converter[Double] {
-    override def dataType: DataType = DoubleType
+    def dataType: DataType = DoubleType
   }
 
   implicit val booleanConverter: Converter[Boolean] = new Converter[Boolean] {
-    override def dataType: DataType = BooleanType
+    def dataType: DataType = BooleanType
   }
 
   implicit val timestampConverter: Converter[Timestamp] = new Converter[Timestamp] {
-    override def dataType: DataType = TimestampType
+    def dataType: DataType = TimestampType
   }
 
   implicit val dateConverter: Converter[Date] = new Converter[Date] {
-    override def dataType: DataType = DateType
+    def dataType: DataType = DateType
   }
 
   implicit val stringConverter: Converter[String] = new Converter[String] {
-    override def dataType: DataType = StringType
+    def dataType: DataType = StringType
   }
 
 }

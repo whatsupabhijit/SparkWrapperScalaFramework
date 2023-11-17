@@ -9,7 +9,7 @@ import dev.dutta.abhijit.hashnode.nucleus.Nucleus.nucleus
 object SampleFirstElement {
 
   // Mutate the NucleusInput to the desired Input Layout applicable to that Element.
-  def mutateFirstElementInput(nucleusInput: NucleusInput): FirstElementInput =
+  private def mutateFirstElementInput(nucleusInput: NucleusInput): FirstElementInput =
     FirstElementInput(nucleusInput.firstElementData, nucleusInput.isNoAtomFound)
 
   implicit val firstCompound: Compound[FirstElementInput] =

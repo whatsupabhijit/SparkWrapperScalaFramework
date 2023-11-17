@@ -18,14 +18,14 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
     // isCalcAtomRequired: Boolean // TODO: TODO_ID:1 Atom need not be generated always
   howToCalcAtom: I => O
 )(
-  implicit c: Converter[O], belongsToWhichElement: Element[I]
+  implicit c: Converter[O], element: Element[I]
 ) extends Serializable with Calculable[I] {
 
   val atomName: String = name
   val calcDefault: I => O = howToCalcDefault
   val calcNoAtom: I => O = howToCalcNoAtom
   val calcAtom: I => O = howToCalcAtom
-  val elementName: String = belongsToWhichElement.elementName
+  val elementName: String = element.elementName
 
   /**
    * Calculates the output of a vector of specific source type I
