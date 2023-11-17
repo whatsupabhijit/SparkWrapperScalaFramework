@@ -21,11 +21,11 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
   implicit c: Converter[O], belongsToWhichElement: Element[I]
 ) extends Serializable with Calculable[I] {
 
-  private val atomName: String = name
-  private val calcDefault: I => O = howToCalcDefault
-  private val calcNoAtom: I => O = howToCalcNoAtom
-  private val calcAtom: I => O = howToCalcAtom
-  private val elementName: String = belongsToWhichElement.elementName
+  val atomName: String = name
+  val calcDefault: I => O = howToCalcDefault
+  val calcNoAtom: I => O = howToCalcNoAtom
+  val calcAtom: I => O = howToCalcAtom
+  val elementName: String = belongsToWhichElement.elementName
 
   /**
    * Calculates the output of a vector of specific source type I
@@ -69,7 +69,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
   override def calc(records: Dataset[I]): DataFrame = records.map(logicForAnAtom).toDF()
 
   // Methods for parent class i.e. Element
-  private lazy val sparkDataType: DataType = c.dataType
+  def sparkDataType: DataType = c.dataType
   def structField: StructField = StructField(atomName, sparkDataType, nullable = false)
 
 }
@@ -79,8 +79,7 @@ object Atom extends Serializable {
   def apply[I <: ElementOverriders: TypeTag, O: TypeTag](
     name: String,
     description: String,
-    defaultValue: I => O
-  )(
+    defaultValue: I => O,
     isNoAtomNotApplicable: Boolean,
     noAtomValue: I => O
   )(

@@ -1,9 +1,10 @@
-package dev.dutta.abhijit.hashnode.guide
+package dev.dutta.abhijit.hashnode.guide.elements
 
 import dev.dutta.abhijit.hashnode.constants.IntConstants._
 import dev.dutta.abhijit.hashnode.guide.schema.FirstElementInput
 import dev.dutta.abhijit.hashnode.nucleus.{Atom, Compound, Element}
 import dev.dutta.abhijit.hashnode.schema.NucleusInput
+import dev.dutta.abhijit.hashnode.nucleus.Nucleus.nucleus
 
 object SampleFirstElement {
 
@@ -21,12 +22,10 @@ object SampleFirstElement {
     Atom[FirstElementInput, Int](
       name = "Atom 1",
       description = "Atom 1 lorem ipsum lorem ipsum",
-      defaultValue = (_: FirstElementInput) => _ZERO
-    )(
+      defaultValue = (_: FirstElementInput) => _ZERO,
       isNoAtomNotApplicable = true,
       noAtomValue = (_: FirstElementInput) => _MINUS1
-    )(
-      calc = (i: FirstElementInput) => {
+    )((i: FirstElementInput) => {
         i.firstData.filter(_.isValidInt).sum
     })
 

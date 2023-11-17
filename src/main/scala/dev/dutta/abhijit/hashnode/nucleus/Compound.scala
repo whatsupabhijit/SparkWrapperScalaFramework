@@ -16,21 +16,22 @@ class Compound[I <: ElementOverriders: TypeTag]
   extends Calculable[I] with Serializable {
 
   // Methods for child class i.e. Element
-  def add(element: Element[I]): Unit = elementsBuffer += element
+  def add(element: Element[I]): Unit = elementsBuffer.append(element)
 
   // Class Variables and Methods
-  private val elementsBuffer: ListBuffer[Element[I]] = new ListBuffer()
-  private val allElements: List[Element[I]] = elementsBuffer.toList
-  val allAtoms: List[Atom[I, _]] = allElements.flatMap(_.allAtoms)  // TODO: TODO_ID_1
-  private val allAtomLogics: List[I => _] = allAtoms.map(_.logicForAnAtom)
+  val elementsBuffer: ListBuffer[Element[I]] = new ListBuffer()
+  lazy val allElements: List[Element[I]] = elementsBuffer.toList
+  lazy val allAtoms: List[Atom[I, _]] = allElements.flatMap(_.allAtoms.toList)  // TODO: TODO_ID_1
+  lazy val allAtomLogics: List[I => _] = allAtoms.map(_.logicForAnAtom)
 
   // Logic for handling Vector - Online
   override def calc(records: Vector[I]): AtomTable = allAtoms.flatMap(_.calc(records))
 
-  def calcAll(records: Vector[NucleusInput]): AtomTable = {
-    val transformedInput: Vector[I] = records.map(mutator)
-    calc(transformedInput)
-  }
+  lazy val calcNotMutated: Vector[NucleusInput] => AtomTable =
+    (records: Vector[NucleusInput]) => {
+      val mutatedInput: Vector[I] = records.map(mutator)
+      calc(mutatedInput)
+    }
 
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(allAtoms.map(_.structField))
@@ -43,8 +44,7 @@ class Compound[I <: ElementOverriders: TypeTag]
 object Compound extends Serializable {
 
   def apply[I <: ElementOverriders : TypeTag]
-  (mutator: NucleusInput => I)
-  (implicit nucleus: Nucleus) : Compound[I] = {
+  (mutator: NucleusInput => I)(implicit nucleus: Nucleus): Compound[I] = {
     val compound = new Compound[I](mutator)
     nucleus.add(compound)
     compound

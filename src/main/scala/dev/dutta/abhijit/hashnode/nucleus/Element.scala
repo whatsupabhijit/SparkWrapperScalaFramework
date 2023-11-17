@@ -12,6 +12,8 @@ import scala.reflect.runtime.universe.TypeTag
 class Element[I <: ElementOverriders: TypeTag]
 (
   name: String
+) (
+    implicit val compound: Compound[I]
 ) extends Calculable[I] with Serializable {
 
   val elementName: String = name
@@ -20,9 +22,9 @@ class Element[I <: ElementOverriders: TypeTag]
   def add(atom: Atom[I, _]): Unit = atomsBuffer += atom
 
   // Class Variables and Methods
-  private val atomsBuffer: ListBuffer[Atom[I, _]] = ListBuffer()
-  val allAtoms: List[Atom[I, _]] = atomsBuffer.toList // TODO: TODO_ID_1
-  private lazy val allAtomLogics: List[I => _] = allAtoms.map(_.logicForAnAtom)
+  val atomsBuffer: ListBuffer[Atom[I, _]] = ListBuffer()
+  lazy val allAtoms: List[Atom[I, _]] = atomsBuffer.toList // TODO: TODO_ID_1
+  lazy val allAtomLogics: List[I => _] = allAtoms.map(_.logicForAnAtom)
 
   // Logic for handling Vector - Online
   override def calc(records: Vector[I]): AtomTable = allAtoms.flatMap(_.calc(records))
@@ -30,7 +32,7 @@ class Element[I <: ElementOverriders: TypeTag]
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(allAtoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
-  private def withAtoms(aRecord: I): Row = Row.fromSeq(allAtomLogics.map(_(aRecord)))
+  def withAtoms(aRecord: I): Row = Row.fromSeq(allAtomLogics.map(_(aRecord)))
   override def calc(records: Dataset[I]): DataFrame = records.map(withAtoms)
 
 }
@@ -43,7 +45,7 @@ object Element extends Serializable {
   )(
     implicit compound: Compound[I]
   ): Element[I] = {
-    val element: Element[I] = new Element[I](name = elementName)
+    val element: Element[I] = new Element[I](elementName)
     compound.add(element)
     element
   }

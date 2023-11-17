@@ -14,17 +14,17 @@ class Nucleus extends Serializable {
   def add(compound: Compound[_]): Unit = compoundBuffer += compound
 
   // Class Variables and Methods
-  private val compoundBuffer: ListBuffer[Compound[_]] = new ListBuffer()
-  private val allCompounds: List[Compound[_]] = compoundBuffer.toList
-  private val allAtoms: List[Atom[_, _]] = allCompounds.map(_.allAtoms).flatten // TODO: TODO_ID_1
+  val compoundBuffer: ListBuffer[Compound[_]] = new ListBuffer()
+  lazy val allCompounds: List[Compound[_]] = compoundBuffer.toList
+  lazy val allAtoms: List[Atom[_, _]] = allCompounds.map(_.allAtoms).flatten // TODO: TODO_ID_1
 
   // Logic for handling Vector - Online
-  def calc(records: Vector[NucleusInput]): AtomTable = allCompounds.flatMap(_.calcAll(records))
+  def calc(records: Vector[NucleusInput]): AtomTable = allCompounds.flatMap(_.calcNotMutated(records))
 
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(allAtoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
-  private def withAtoms(ni: NucleusInput): Row = Row.fromSeq(allCompounds.map(_.withAtoms(ni)))
+  def withAtoms(ni: NucleusInput): Row = Row.fromSeq(allCompounds.map(_.withAtoms(ni)))
   def calc(records: Dataset[NucleusInput]): DataFrame = records.map(withAtoms)
 }
 
