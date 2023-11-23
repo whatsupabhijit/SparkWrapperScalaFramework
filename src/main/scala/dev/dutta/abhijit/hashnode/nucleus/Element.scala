@@ -33,7 +33,7 @@ class Element[I <: ElementOverriders: TypeTag]
   lazy val schema: StructType = StructType(atoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
   def withAtoms(aRecord: I): Row = Row.fromSeq(atomLogics.map(_(aRecord)))
-  override def calc(records: Dataset[I]): DataFrame = records.map(withAtoms)
+  override def calcDataset(records: Dataset[I]): DataFrame = records.map(withAtoms)
 
 }
 

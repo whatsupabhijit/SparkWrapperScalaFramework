@@ -66,7 +66,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
 
   // Logic for handling Spark Dataset - Batch
   implicit val encoder: ExpressionEncoder[O] = ExpressionEncoder[O]
-  override def calc(records: Dataset[I]): DataFrame = records.map(logicForAnAtom).toDF()
+  override def calcDataset(records: Dataset[I]): DataFrame = records.map(logicForAnAtom).toDF()
 
   // Methods for parent class i.e. Element
   def sparkDataType: DataType = c.dataType
@@ -102,7 +102,7 @@ object Atom extends Serializable {
   }
 
   implicit class calcBatch[I <: ElementOverriders](records: Dataset[I]) {
-    def calcBatch[O: TypeTag](atom: Atom[I, O]): DataFrame = atom.calc(records)
+    def calcBatch[O: TypeTag](atom: Atom[I, O]): DataFrame = atom.calcDataset(records)
   }
 
 }

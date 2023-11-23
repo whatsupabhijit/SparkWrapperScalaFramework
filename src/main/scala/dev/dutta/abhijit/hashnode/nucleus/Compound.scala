@@ -38,7 +38,7 @@ class Compound[I <: ElementOverriders: TypeTag]
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
   def withAtoms(aRecord: I): Row = Row.fromSeq(atomLogics.map(_(aRecord)))
   def withAtoms(aRecord: NucleusInput): Row = Row.fromSeq(atomLogics.map(_(mutator(aRecord))))
-  override def calc(records: Dataset[I]): DataFrame = records.map(withAtoms)
+  override def calcDataset(records: Dataset[I]): DataFrame = records.map(withAtoms)
 }
 
 object Compound extends Serializable {

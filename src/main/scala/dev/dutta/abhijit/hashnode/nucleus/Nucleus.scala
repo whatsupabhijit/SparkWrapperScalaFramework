@@ -25,7 +25,7 @@ class Nucleus extends Serializable {
   lazy val schema: StructType = StructType(atoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
   def withAtoms(ni: NucleusInput): Row = Row.fromSeq(compounds.map(_.withAtoms(ni)))
-  def calc(records: Dataset[NucleusInput]): DataFrame = records.map(withAtoms)
+  def calcDataset(records: Dataset[NucleusInput]): DataFrame = records.map(withAtoms)
 }
 
 object Nucleus {
