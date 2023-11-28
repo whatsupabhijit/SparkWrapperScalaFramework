@@ -1,6 +1,6 @@
 package dev.dutta.abhijit.hashnode.nucleus
 
-import dev.dutta.abhijit.hashnode.nucleus.AtomOutput.AtomTable
+import dev.dutta.abhijit.hashnode.nucleus.AtomOutput.AtomMap
 import dev.dutta.abhijit.hashnode.schema.NucleusInput
 import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
 import org.apache.spark.sql.{DataFrame, Dataset, Row}
@@ -18,10 +18,8 @@ class Nucleus extends Serializable {
   lazy val atoms: List[Atom[_, _]] = compoundBuffer.toList.map(_.atoms).flatten // TODO: TODO_ID_1
 
   // Logic for handling Vector - Online
-  lazy val calc: Vector[NucleusInput] => AtomTable = (records: Vector[NucleusInput]) => {
-//    println("total compounds: " + compoundBuffer.size)
-    compoundBuffer.toList.flatMap(_.mutateAndCalc(records))
-  }
+  def calc(records: Vector[NucleusInput]): AtomMap = compoundBuffer.toList
+    .flatMap(_.mutateAndCalc(records)).toAtomMap
 
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(atoms.map(_.structField))
