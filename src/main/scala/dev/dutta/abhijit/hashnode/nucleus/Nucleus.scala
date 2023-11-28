@@ -19,7 +19,10 @@ class Nucleus extends Serializable {
   lazy val atoms: List[Atom[_, _]] = compounds.map(_.atoms).flatten // TODO: TODO_ID_1
 
   // Logic for handling Vector - Online
-  def calc(records: Vector[NucleusInput]): AtomTable = compounds.flatMap(_.calcNotMutated(records))
+  def calc(records: Vector[NucleusInput]): AtomTable = {
+    println("total compounds: " + compounds.size)
+    compounds.flatMap(_.calcNotMutated(records))
+  }
 
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(atoms.map(_.structField))
