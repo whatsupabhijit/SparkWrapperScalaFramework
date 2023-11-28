@@ -21,13 +21,14 @@ class Compound[I <: ElementOverriders: TypeTag]
 
   // Class Variables and Methods
   lazy val elements: List[Element[I]] = elementsBuffer.toList
-  lazy val atoms: List[Atom[I, _]] = elements.flatMap(_.atoms.toList)  // TODO: TODO_ID_1
+  lazy val atoms: List[Atom[I, _]] = elements.flatMap(_.atomsBuffer.toList)  // TODO: TODO_ID_1
   lazy val atomLogics: List[I => _] = atoms.map(_.logicForAnAtom)
 
   // Logic for handling Vector - Online
-  override def calc(records: Vector[I]): AtomTable = atoms.flatMap(_.calc(records))
+  override def calc(records: Vector[I]): AtomTable = elementsBuffer.toList
+    .flatMap(_.atomsBuffer.toList).flatMap(_.calc(records))
 
-  lazy val calcNotMutated: Vector[NucleusInput] => AtomTable =
+  lazy val mutateAndCalc: Vector[NucleusInput] => AtomTable =
     (records: Vector[NucleusInput]) => {
       val mutatedInput: Vector[I] = records.map(mutator)
       calc(mutatedInput)

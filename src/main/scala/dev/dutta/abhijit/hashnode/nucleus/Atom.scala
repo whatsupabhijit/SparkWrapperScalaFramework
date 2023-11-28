@@ -32,7 +32,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
    *
    * @return List of Atom's calculated values (String for now, will be changed to some custom class)
    * */
-   val logicForAnAtom: I => O = (i: I) => {
+   lazy val logicForAnAtom: I => O = (i: I) => {
      try {
        if (isNoAtomNotApplicable && i.isNoAtomFound) calcNoAtom(i)
        else if (i.isToBeDefaulted) calcDefault(i)
@@ -69,7 +69,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
   override def calcDataset(records: Dataset[I]): DataFrame = records.map(logicForAnAtom).toDF()
 
   // Methods for parent class i.e. Element
-  def sparkDataType: DataType = c.dataType
+  private def sparkDataType: DataType = c.dataType
   def structField: StructField = StructField(atomName, sparkDataType, nullable = false)
 
 }

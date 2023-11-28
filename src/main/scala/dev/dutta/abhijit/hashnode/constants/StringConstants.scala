@@ -14,4 +14,10 @@ object StringConstants {
   lazy val _N: String = "N"
   lazy val _TEST_APP_NAME: String = "Nucleus Testing"
   lazy val _ERROR: String = "ERROR"
+
+  lazy val _IDENTIFIER_1 = "record 1"
+  lazy val _IDENTIFIER_2 = "record 2"
+
+  lazy val _ATOM_1_NAME = "Atom-1"
+  lazy val _ATOM_1_DESC = "Atom 1 lorem ipsum lorem ipsum"
 }
