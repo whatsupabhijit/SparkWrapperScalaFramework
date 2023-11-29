@@ -17,15 +17,16 @@ object SampleElement {
 
   implicit val element: Element[ElementInput] = Element[ElementInput](elementName = "First Element")
 
-  val atom1: Atom[ElementInput, Int] =
-    Atom[ElementInput, Int](
-      name = _ATOM_1_NAME,
-      description = _ATOM_1_DESC,
-      defaultValue = (_: ElementInput) => _ZERO,
-      isNoAtomNotApplicable = true,
-      noAtomValue = (_: ElementInput) => _MINUS1
-    )((i: ElementInput) => {
-        i.firstData.filter(_.isValidInt).sum
-    })
+  Atom[ElementInput, Int](
+    name = _ATOM_1_NAME,
+    description = _ATOM_1_DESC,
+    defaultValue = (_: ElementInput) => _ZERO,
+    isNoAtomNotApplicable = true,
+    noAtomValue = (_: ElementInput) => _MINUS1
+  )((i: ElementInput) => {
+      i.firstData.filter(_.isValidInt).sum
+  })
+
+  // Keep on adding Atoms with business logics below
 
 }
