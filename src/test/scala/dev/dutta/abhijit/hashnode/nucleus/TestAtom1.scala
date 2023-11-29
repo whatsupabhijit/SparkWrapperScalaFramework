@@ -10,6 +10,7 @@ import dev.dutta.abhijit.hashnode.nucleus.Nucleus.nucleus
 import dev.dutta.abhijit.hashnode.testData.NucleusTestData._
 import org.apache.spark.sql.{DataFrame, Dataset}
 
+// TODO: Create a testSuite to run sequentially and add do not discover here
 class TestAtom1 extends AnyFunSuite with Session {
 
   // TODO: TO FIND OUT WHY REMOVING THIS LINE DOES NOT CALCULATE ANYTHING
@@ -18,17 +19,17 @@ class TestAtom1 extends AnyFunSuite with Session {
   implicit val atomKeyToTest: String = _ATOM_1_NAME
 
   test("Online calc() should return 6 for the first atom") {
-    assertResult(_SIX)(onlineResultMap.valueOfRecord(_ZERO))
+    assertResult(expected = _SIX)(actual = onlineResultMap.valueOfRecord(_ZERO))
   }
 
   test("Online calc() should return 9 for the second atom") {
-    assertResult(_NINE)(onlineResultMap.valueOfRecord(_ONE))
+    assertResult(expected = _NINE)(actual = onlineResultMap.valueOfRecord(_ONE))
   }
 
   test("Batch calc() should return 6 for the first atom, 9 for the second atom") {
     import spark.implicits._
     val batchRecords: Dataset[NucleusInput] = Seq(rec01, rec02).toDS()
-    val batchResult: DataFrame = nucleus.calcDataset(batchRecords)
+    val batchResult: DataFrame = nucleus.calc(batchRecords)
 //    batchResult.show()
     assert(batchResult.count() != _ZERO)
   }
