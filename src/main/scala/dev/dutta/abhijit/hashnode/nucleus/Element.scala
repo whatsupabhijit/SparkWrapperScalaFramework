@@ -33,7 +33,7 @@ class Element[I <: ElementOverriders: TypeTag]
   lazy val schema: StructType = StructType(atoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
   def withAtoms(aRecord: I): Row = Row.fromSeq(atomLogics.map(_(aRecord)))
-  override def calcDataset(records: Dataset[I]): DataFrame = records.map(withAtoms)
+  override def calc(records: Dataset[I]): DataFrame = records.map(withAtoms)
 
 }
 
@@ -52,11 +52,11 @@ object Element extends Serializable {
 
 
   implicit class CalcOnline[I <: ElementOverriders](records: Vector[I]) {
-    def calcOnline(element: Element[I]): AtomTable = element.calc(records)
+    def calc(element: Element[I]): AtomTable = element.calc(records)
   }
 
   implicit class CalcBatch[I <: ElementOverriders](records: Dataset[I]) {
-    def calcBatch(element: Element[I])(implicit ss: SparkSession): DataFrame =
+    def calc(element: Element[I])(implicit ss: SparkSession): DataFrame =
       records.map(element.withAtoms)(element.encoder)
   }
 

@@ -21,10 +21,10 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
   implicit c: Converter[O], element: Element[I]
 ) extends Serializable with Calculable[I] {
 
-  val atomName: String = name
-  val calcDefault: I => O = howToCalcDefault
-  val calcNoAtom: I => O = howToCalcNoAtom
-  val calcAtom: I => O = howToCalcAtom
+  private val atomName: String = name
+  private val calcDefault: I => O = howToCalcDefault
+  private val calcNoAtom: I => O = howToCalcNoAtom
+  private val calcAtom: I => O = howToCalcAtom
   val elementName: String = element.elementName
 
   /**
@@ -66,7 +66,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
 
   // Logic for handling Spark Dataset - Batch
   implicit val encoder: ExpressionEncoder[O] = ExpressionEncoder[O]
-  override def calcDataset(records: Dataset[I]): DataFrame = records.map(logicForAnAtom).toDF()
+  override def calc(records: Dataset[I]): DataFrame = records.map(logicForAnAtom).toDF()
 
   // Methods for parent class i.e. Element
   private def sparkDataType: DataType = c.dataType
@@ -102,7 +102,7 @@ object Atom extends Serializable {
   }
 
   implicit class calcBatch[I <: ElementOverriders](records: Dataset[I]) {
-    def calcBatch[O: TypeTag](atom: Atom[I, O]): DataFrame = atom.calcDataset(records)
+    def calc[O: TypeTag](atom: Atom[I, O]): DataFrame = atom.calc(records)
   }
 
 }

@@ -1,6 +1,5 @@
 package dev.dutta.abhijit.hashnode.nucleus
 
-import dev.dutta.abhijit.hashnode.constants.IntConstants._
 import dev.dutta.abhijit.hashnode.converter.Converter
 
 import java.io.Serializable

@@ -16,7 +16,7 @@ class Compound[I <: ElementOverriders: TypeTag]
   extends Calculable[I] with Serializable {
 
   // Methods for child class i.e. Element
-  val elementsBuffer: ListBuffer[Element[I]] = new ListBuffer()
+  private val elementsBuffer: ListBuffer[Element[I]] = new ListBuffer()
   def add(element: Element[I]): Unit = elementsBuffer.append(element)
 
   // Class Variables and Methods
@@ -28,18 +28,17 @@ class Compound[I <: ElementOverriders: TypeTag]
   override def calc(records: Vector[I]): AtomTable = elementsBuffer.toList
     .flatMap(_.atomsBuffer.toList).flatMap(_.calc(records))
 
-  lazy val mutateAndCalc: Vector[NucleusInput] => AtomTable =
-    (records: Vector[NucleusInput]) => {
-      val mutatedInput: Vector[I] = records.map(mutator)
-      calc(mutatedInput)
-    }
+  def mutateAndCalc(records: Vector[NucleusInput]): AtomTable = {
+    val mutatedInput: Vector[I] = records.map(mutator)
+    calc(mutatedInput)
+  }
 
   // Logic for handling Spark Dataset - Batch
   lazy val schema: StructType = StructType(atoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
   def withAtoms(aRecord: I): Row = Row.fromSeq(atomLogics.map(_(aRecord)))
   def withAtoms(aRecord: NucleusInput): Row = Row.fromSeq(atomLogics.map(_(mutator(aRecord))))
-  override def calcDataset(records: Dataset[I]): DataFrame = records.map(withAtoms)
+  override def calc(records: Dataset[I]): DataFrame = records.map(withAtoms)
 }
 
 object Compound extends Serializable {
@@ -52,11 +51,11 @@ object Compound extends Serializable {
   }
 
   implicit class CalcOnline[I <: ElementOverriders](records: Vector[I]) {
-    def calcOnline(compound: Compound[I]): AtomTable = compound.calc(records)
+    def calc(compound: Compound[I]): AtomTable = compound.calc(records)
   }
 
   implicit class CalcBatch[I <: ElementOverriders](records: Dataset[I]) {
-    def calcBatch(compound: Compound[I])(implicit ss: SparkSession): DataFrame =
+    def calc(compound: Compound[I])(implicit ss: SparkSession): DataFrame =
       records.map(compound.withAtoms)(compound.encoder)
   }
 

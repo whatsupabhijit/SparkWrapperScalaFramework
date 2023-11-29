@@ -15,6 +15,7 @@ class Nucleus extends Serializable {
   def add(compound: Compound[_]): Unit = compoundBuffer.append(compound)
 
   // Class Variables and Methods
+  // Do not change the .map.flatten to flatMap as it will impact the output
   lazy val atoms: List[Atom[_, _]] = compoundBuffer.toList.map(_.atoms).flatten // TODO: TODO_ID_1
 
   // Logic for handling Vector - Online
@@ -25,7 +26,7 @@ class Nucleus extends Serializable {
   lazy val schema: StructType = StructType(atoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
   def withAtoms(ni: NucleusInput): Row = Row.fromSeq(compoundBuffer.map(_.withAtoms(ni)))
-  def calcDataset(records: Dataset[NucleusInput]): DataFrame = records.map(withAtoms)
+  def calc(records: Dataset[NucleusInput]): DataFrame = records.map(withAtoms)
 }
 
 object Nucleus {
