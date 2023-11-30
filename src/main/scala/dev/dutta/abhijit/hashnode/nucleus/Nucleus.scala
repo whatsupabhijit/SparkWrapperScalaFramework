@@ -17,16 +17,27 @@ class Nucleus extends Serializable {
   // Class Variables and Methods
   // Do not change the .map.flatten to flatMap as it will impact the output
   lazy val atoms: List[Atom[_, _]] = compoundBuffer.toList.map(_.atoms).flatten // TODO: TODO_ID_1
+  lazy val schema: StructType = StructType(atoms.map(_.structField))
+  implicit lazy val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
 
   // Logic for handling Vector - Online
   def calc(records: Vector[NucleusInput]): AtomMap = compoundBuffer.toList
     .flatMap(_.mutateAndCalc(records)).toAtomMap
 
   // Logic for handling Spark Dataset - Batch
-  lazy val schema: StructType = StructType(atoms.map(_.structField))
-  implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
-  def withAtoms(ni: NucleusInput): Row = Row.fromSeq(compoundBuffer.map(_.withAtoms(ni)))
-  def calc(records: Dataset[NucleusInput]): DataFrame = records.map(withAtoms)
+  def withAtoms(ni: NucleusInput): Row = Row.fromSeq(compoundBuffer.map(
+    a => {
+      println("a.withAtoms(ni): " + a.withAtoms(ni))
+      a.withAtoms(ni)
+     }
+  ))
+
+  def calc(records: Dataset[NucleusInput]): DataFrame = {
+    println("schema in calc: " + schema)
+    println("atoms:" + atoms.map(a => (a.structField, a.atomName)))
+    records.map(rec => withAtoms(rec))
+  }
+
 }
 
 object Nucleus {

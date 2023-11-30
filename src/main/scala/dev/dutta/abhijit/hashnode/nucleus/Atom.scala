@@ -21,7 +21,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
   implicit c: Converter[O], element: Element[I]
 ) extends Serializable with Calculable[I] {
 
-  private val atomName: String = name
+  val atomName: String = name
   private val calcDefault: I => O = howToCalcDefault
   private val calcNoAtom: I => O = howToCalcNoAtom
   private val calcAtom: I => O = howToCalcAtom
@@ -99,10 +99,6 @@ object Atom extends Serializable {
 
     element.add(atom)
     atom
-  }
-
-  implicit class calcBatch[I <: ElementOverriders](records: Dataset[I]) {
-    def calc[O: TypeTag](atom: Atom[I, O]): DataFrame = atom.calc(records)
   }
 
 }

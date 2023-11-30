@@ -50,14 +50,4 @@ object Element extends Serializable {
     element
   }
 
-
-  implicit class CalcOnline[I <: ElementOverriders](records: Vector[I]) {
-    def calc(element: Element[I]): AtomTable = element.calc(records)
-  }
-
-  implicit class CalcBatch[I <: ElementOverriders](records: Dataset[I]) {
-    def calc(element: Element[I])(implicit ss: SparkSession): DataFrame =
-      records.map(element.withAtoms)(element.encoder)
-  }
-
 }

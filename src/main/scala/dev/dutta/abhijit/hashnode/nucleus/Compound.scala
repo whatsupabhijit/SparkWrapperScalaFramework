@@ -2,7 +2,7 @@ package dev.dutta.abhijit.hashnode.nucleus
 
 import dev.dutta.abhijit.hashnode.nucleus.AtomOutput.AtomTable
 import dev.dutta.abhijit.hashnode.schema.NucleusInput
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
 import org.apache.spark.sql.types.StructType
 
@@ -16,12 +16,11 @@ class Compound[I <: ElementOverriders: TypeTag]
   extends Calculable[I] with Serializable {
 
   // Methods for child class i.e. Element
-  private val elementsBuffer: ListBuffer[Element[I]] = new ListBuffer()
+  val elementsBuffer: ListBuffer[Element[I]] = new ListBuffer()
   def add(element: Element[I]): Unit = elementsBuffer.append(element)
 
   // Class Variables and Methods
-  lazy val elements: List[Element[I]] = elementsBuffer.toList
-  lazy val atoms: List[Atom[I, _]] = elements.flatMap(_.atomsBuffer.toList)  // TODO: TODO_ID_1
+  lazy val atoms: List[Atom[I, _]] = elementsBuffer.toList.flatMap(_.atomsBuffer.toList) // TODO: TODO_ID_1
   lazy val atomLogics: List[I => _] = atoms.map(_.logicForAnAtom)
 
   // Logic for handling Vector - Online
@@ -48,15 +47,6 @@ object Compound extends Serializable {
     val compound = new Compound[I](mutator)
     nucleus.add(compound)
     compound
-  }
-
-  implicit class CalcOnline[I <: ElementOverriders](records: Vector[I]) {
-    def calc(compound: Compound[I]): AtomTable = compound.calc(records)
-  }
-
-  implicit class CalcBatch[I <: ElementOverriders](records: Dataset[I]) {
-    def calc(compound: Compound[I])(implicit ss: SparkSession): DataFrame =
-      records.map(compound.withAtoms)(compound.encoder)
   }
 
 }
