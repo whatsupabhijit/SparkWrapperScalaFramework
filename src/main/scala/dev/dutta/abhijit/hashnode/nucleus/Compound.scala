@@ -4,7 +4,7 @@ import dev.dutta.abhijit.hashnode.nucleus.AtomOutput.AtomTable
 import dev.dutta.abhijit.hashnode.schema.NucleusInput
 import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
-import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.types.{StructField, StructType}
 
 import java.io.Serializable
 import scala.collection.mutable.ListBuffer
@@ -20,8 +20,14 @@ class Compound[I <: ElementOverriders: TypeTag]
   def add(element: Element[I]): Unit = elementsBuffer.append(element)
 
   // Class Variables and Methods
-  lazy val atoms: List[Atom[I, _]] = elementsBuffer.toList.flatMap(_.atomsBuffer.toList) // TODO: TODO_ID_1
-  lazy val atomLogics: List[I => _] = atoms.map(_.logicForAnAtom)
+  implicit class ElementListBufferDerivations(elementBuffer: ListBuffer[Element[I]]) {
+    // TODO: TODO_ID_1
+    def getAtoms: List[Atom[I, _]] = elementBuffer.toList.flatMap(_.atomsBuffer.toList)
+  }
+
+  lazy val atoms: List[Atom[I, _]] = elementsBuffer.getAtoms
+  lazy val atomLogics: List[I => _] = elementsBuffer.getAtoms.map(_.logicForAnAtom)
+  lazy val schema2: Seq[StructField] = elementsBuffer.getAtoms.map(_.structField) // DEBUG
 
   // Logic for handling Vector - Online
   override def calc(records: Vector[I]): AtomTable = elementsBuffer.toList
@@ -36,7 +42,7 @@ class Compound[I <: ElementOverriders: TypeTag]
   lazy val schema: StructType = StructType(atoms.map(_.structField))
   implicit val encoder: ExpressionEncoder[Row] = RowEncoder(schema = schema)
   def withAtoms(aRecord: I): Row = Row.fromSeq(atomLogics.map(_(aRecord)))
-  def withAtoms(aRecord: NucleusInput): Row = Row.fromSeq(atomLogics.map(_(mutator(aRecord))))
+  def withAtoms(aRecord: NucleusInput): Row = Row.fromSeq(elementsBuffer.getAtoms.map(_.logicForAnAtom).map(_(mutator(aRecord))))
   override def calc(records: Dataset[I]): DataFrame = records.map(withAtoms)
 }
 
