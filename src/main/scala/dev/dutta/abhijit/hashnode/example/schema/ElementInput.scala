@@ -1,4 +1,4 @@
-package dev.dutta.abhijit.hashnode.guide.schema
+package dev.dutta.abhijit.hashnode.example.schema
 
 import dev.dutta.abhijit.hashnode.nucleus.ElementOverriders
 

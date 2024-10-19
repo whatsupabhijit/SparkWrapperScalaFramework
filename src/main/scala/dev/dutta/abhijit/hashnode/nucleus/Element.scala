@@ -3,17 +3,17 @@ package dev.dutta.abhijit.hashnode.nucleus
 import dev.dutta.abhijit.hashnode.nucleus.AtomOutput.AtomTable
 import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
 
 import java.io.Serializable
 import scala.collection.mutable.ListBuffer
 import scala.reflect.runtime.universe.TypeTag
 
-class Element[I <: ElementOverriders: TypeTag]
+class Element[I <: ElementOverriders: TypeTag, T]
 (
   name: String
 ) (
-    implicit compound: Compound[I]
+    implicit compound: Compound[I, T]
 ) extends Calculable[I] with Serializable {
 
   val elementName: String = name
@@ -24,7 +24,7 @@ class Element[I <: ElementOverriders: TypeTag]
 
   // Class Variables and Methods
   lazy val atoms: List[Atom[I, _]] = atomsBuffer.toList // TODO: TODO_ID_1
-  lazy val atomLogics: List[I => _] = atoms.map(_.logicForAnAtom)
+  lazy val atomLogics: List[I => _] = atomsBuffer.toList.map(_.logicForAnAtom)
 
   // Logic for handling Vector - Online
   override def calc(records: Vector[I]): AtomTable = atoms.flatMap(_.calc(records))
@@ -39,13 +39,9 @@ class Element[I <: ElementOverriders: TypeTag]
 
 object Element extends Serializable {
 
-  def apply[I <: ElementOverriders: TypeTag]
-  (
-    elementName: String
-  )(
-    implicit compound: Compound[I]
-  ): Element[I] = {
-    val element: Element[I] = new Element[I](elementName)
+  def apply[I <: ElementOverriders: TypeTag, T](elementName: String)(implicit compound: Compound[I, T])
+  : Element[I, T] = {
+    val element: Element[I, T] = new Element[I, T](elementName)
     compound.add(element)
     element
   }

@@ -18,7 +18,7 @@ class Atom[I <: ElementOverriders: TypeTag, O: TypeTag]
     // isCalcAtomRequired: Boolean // TODO: TODO_ID:1 Atom need not be generated always
   howToCalcAtom: I => O
 )(
-  implicit c: Converter[O], element: Element[I]
+  implicit c: Converter[O], element: Element[I, _]
 ) extends Serializable with Calculable[I] {
 
   val atomName: String = name
@@ -85,7 +85,7 @@ object Atom extends Serializable {
   )(
     calc: I => O
   )(
-    implicit c: Converter[O], element: Element[I]
+    implicit c: Converter[O], element: Element[I, _]
   ): Atom[I, O] = {
 
     val atom = new Atom[I, O](
